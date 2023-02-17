@@ -1,0 +1,68 @@
+{
+  "name": "gourmet",
+  "description": "Gourmet Nibbles",
+  "version": "1.0.0",
+  "private": true,
+  "author": "Rex Isaac Raphael <me@xraph.com> (@rex_raph)",
+  "license": "MIT",
+  "keywords": [
+    "nextjs",
+    "starter",
+    "typescript"
+  ],
+  "scripts": {
+    "dev": "next",
+    "build": "next build",
+    "start": "next start",
+    "type-check": "tsc",
+    "lint": "eslint --ignore-path .gitignore \"/*.+(ts|js|tsx)\"",
+    "format": "prettier --ignore-path .gitignore \"/*.+(ts|js|tsx)\" --write",
+    "postinstall": "husky install",
+    "commit": "cz"
+  },
+  "lint-staged": {
+    "/**/*.{ts,js,jsx,tsx}": [
+      "pnpm run lint -- --fix",
+      "pnpm run format"
+    ]
+  },
+  "dependencies": {
+    "axios": "^1.2.0",
+    "keen-slider": "^6.8.5",
+    "next": "^13.0.5",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-modal": "3.15.1",
+    "react-parallax": "^3.5.1",
+    "react-toastify": "^9.1.1"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "16.1.0",
+    "@commitlint/config-conventional": "16.0.0",
+    "@types/node": "16.11.21",
+    "@types/react": "17.0.38",
+    "@types/react-dom": "17.0.11",
+    "@types/react-modal": "^3.13.1",
+    "@typescript-eslint/eslint-plugin": "5.10.1",
+    "@typescript-eslint/parser": "5.10.1",
+    "autoprefixer": "^10.4.13",
+    "commitizen": "4.2.4",
+    "cz-conventional-changelog": "3.3.0",
+    "eslint": "8.7.0",
+    "eslint-config-next": "^13.0.5",
+    "eslint-config-prettier": "8.3.0",
+    "eslint-import-resolver-typescript": "2.5.0",
+    "eslint-plugin-prettier": "4.0.0",
+    "husky": "7.0.4",
+    "lint-staged": "12.1.7",
+    "postcss": "^8.4.21",
+    "prettier": "2.5.1",
+    "tailwindcss": "^3.2.6",
+    "typescript": "4.5.5"
+  },
+  "config": {
+    "commitizen": {
+      "path": "cz-conventional-changelog"
+    }
+  }
+}
