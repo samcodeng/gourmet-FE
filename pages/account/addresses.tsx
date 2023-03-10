@@ -7,34 +7,27 @@ import axios from "axios";
 import { AppContext } from "@/context/AppContext";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { API_URL } from "@/helpers/constants";
+import * as cookie from "cookie";
 
-function Addresses() {
+function Addresses({ user }: any) {
   const [loading, setLoading] = useState(false);
   const [addresses, setAddresses] = useState([]);
-  let { user, getUser } = useContext(AppContext);
   const router = useRouter();
+  const { setSavedAddress } = useContext(AppContext);
   useEffect((): any => {
     const getAddresses = async () => {
-      if (user.jwt == undefined) {
-        await getUser();
-      } else {
-        axios
-          .get(
-            "http://localhost:1337/api/addresses?sort=createdAt%3ADescfilters[user][$eq]=" +
-              user.user.id,
-            {
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${user.jwt}`,
-              },
-            }
-          )
-          .then((response) => {
-            setAddresses(response.data.data);
-            console.log(response.data.data);
-          })
-          .catch(() => {});
-      }
+      axios
+        .get(API_URL + "/addresses", {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${user.token}`,
+          },
+        })
+        .then((response) => {
+          setAddresses(response.data);
+        })
+        .catch(() => {});
     };
     getAddresses();
   }, [user]);
@@ -42,10 +35,10 @@ function Addresses() {
     if (confirm("Delete Address?")) {
       setLoading(true);
       axios
-        .delete("http://localhost:1337/api/addresses/" + id, {
+        .delete(API_URL + "/address/" + id, {
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${user.jwt}`,
+            Authorization: `Bearer ${user.token}`,
           },
         })
         .then((response) => {
@@ -103,10 +96,13 @@ function Addresses() {
             ) : (
               addresses.map((item: any, index) => {
                 return (
-                  <Link
-                    href={"/account/address/" + item.id}
+                  <div
+                    onClick={() => {
+                      setSavedAddress(item);
+                      router.push("/account/address/" + item.id);
+                    }}
                     key={index}
-                    className="addressSmall"
+                    className="cursor-pointer addressSmall"
                   >
                     <div className="flex">
                       <svg
@@ -130,12 +126,8 @@ function Addresses() {
                         />
                       </svg>
                       <div>
-                        <h2>
-                          {item.attributes.firstName +
-                            " " +
-                            item.attributes.lastName}
-                        </h2>
-                        <p>{item.attributes.address}</p>
+                        <h2>{item.first_name + " " + item.last_name}</h2>
+                        <p>{item.address}</p>
                       </div>
                     </div>
                     <svg
@@ -150,7 +142,7 @@ function Addresses() {
                         fill="#D5D5D5"
                       />
                     </svg>
-                  </Link>
+                  </div>
                 );
               })
             )}
@@ -166,3 +158,29 @@ function Addresses() {
 }
 
 export default Addresses;
+
+export async function getServerSideProps(context: any) {
+  let cookies = context.req.headers.cookie;
+  let userInfo;
+  let user;
+  if (cookies) {
+    cookies = cookie.parse(cookies);
+    userInfo = cookies.gourmetUser;
+    if (userInfo) {
+      user = JSON.parse(userInfo);
+    }
+  }
+  if (userInfo) {
+    return {
+      props: { user },
+    };
+  } else {
+    return {
+      redirect: {
+        permanent: false,
+        destination: "/account/auth",
+      },
+      props: {},
+    };
+  }
+}

@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import { createContext, useState, useEffect } from "react";
+import { createContext, useState, useEffect, useContext } from "react";
 
 export const AppContext = createContext<any>(null);
 export const AppProvider = ({ children }: any) => {
@@ -85,9 +85,15 @@ export const AppProvider = ({ children }: any) => {
     }
     setUser(JSON.parse(user));
   };
+  const [savedAddress, setSavedAddress] = useState("");
+  const [savedOrder, setSavedOrder] = useState("");
   return (
     <AppContext.Provider
       value={{
+        savedAddress,
+        setSavedAddress,
+        savedOrder,
+        setSavedOrder,
         addtocart,
         deletefromcart,
         cartitems,

@@ -6,10 +6,13 @@ import { AppContext } from "../../context/AppContext";
 import { Parallax } from "react-parallax";
 import { useKeenSlider } from "keen-slider/react";
 import "keen-slider/keen-slider.min.css";
+import { documentToReactComponents } from "@contentful/rich-text-react-renderer";
+import Image from "next/image";
+import axios from "axios";
+import { API_URL, BACKEND_URL } from "@/helpers/constants";
 
 function Product({ product, products, categories }: any) {
   const { addtocart, formatNumber } = useContext(AppContext);
-
   const [currentSlide, setCurrentSlide] = useState(0);
   const [loaded, setLoaded] = useState(false);
   const [sliderRef, instanceRef] = useKeenSlider<HTMLDivElement>({
@@ -21,14 +24,15 @@ function Product({ product, products, categories }: any) {
       setLoaded(true);
     },
   });
+  const description = () => {
+    return <p>{product?.description}</p>;
+  };
   return (
     <>
       <Header categories={categories} />
       <br></br>
       <Parallax
-        bgImage={
-          "http://localhost:1337" + product.images.data[0].attributes.url
-        }
+        bgImage={BACKEND_URL + "/images/" + product?.cover_image}
         strength={150}
         bgImageAlt={product?.title}
         blur={{ min: -15, max: 15 }}
@@ -44,7 +48,7 @@ function Product({ product, products, categories }: any) {
       <div className="pt-10 wrap wrap2">
         <div className="flex productInfo">
           <div className="w-1/2">
-            <div ref={sliderRef} className="keen-slider carousel">
+            <div className="image">
               {loaded && instanceRef.current && (
                 <div className="nav">
                   <Arrow
@@ -56,22 +60,33 @@ function Product({ product, products, categories }: any) {
                   />
                 </div>
               )}
-              <div className="image">
-                {product.images.data.map((item: any, index: number) => {
-                  return (
-                    <div
-                      className={`keen-slider__slide slide2 ${
-                        "number-slide" + (index + 1)
-                      }`}
-                    >
-                      <img
-                        src={"http://localhost:1337" + item.attributes.url}
-                        alt={item?.title}
+              <div className="keen-slider-wrap">
+                <div ref={sliderRef} className="keen-slider ">
+                  <div className="keen-slider__slide slide2 number-slide1">
+                    <Image
+                      src={BACKEND_URL + "/images/" + product?.cover_image}
+                      alt={product?.name}
+                      width={200}
+                      height={200}
+                    />
+                  </div>
+                  {product?.images?.map((item: any, index: number) => {
+                    return (
+                      <div
+                        className={`keen-slider__slide slide2 ${
+                          "number-slide" + (index + 2)
+                        }`}
                         key={index}
-                      />
-                    </div>
-                  );
-                })}
+                      >
+                        <Image
+                          src={BACKEND_URL + "/images/" + item?.image}
+                          alt={item?.title}
+                          fill
+                        />
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
 
               {loaded && instanceRef.current && (
@@ -91,16 +106,9 @@ function Product({ product, products, categories }: any) {
           </div>
           <div className="w-1/2 pt-6 pl-6">
             <div className="info">
-              <h1>{product?.title} </h1>
-              <p>{product?.description}</p>
-              <p className="price">
-                {product?.regular_price ? (
-                  <span>₦ {formatNumber(product?.regular_price)}</span>
-                ) : (
-                  <></>
-                )}
-                ₦ {formatNumber(product?.sale_price)}
-              </p>
+              <h1>{product?.name} </h1>
+              {description()}
+              <p className="price">₦ {formatNumber(product?.price)}</p>
               <button
                 className="p-btn p-btn2 max-w-[200px] m-0 mt-3"
                 onClick={() => addtocart(product)}
@@ -114,11 +122,11 @@ function Product({ product, products, categories }: any) {
       <div className="featured available">
         <div className="wrap">
           <h3 className="m-h3">Also Available</h3>
-          <div className="row">
+          <div className="grid grid-cols-3 gap-4">
             {products.map((item: any, index: number) => {
               return (
-                <div className="col-md-4 col-xs-6" key={index}>
-                  <ProductItem item={item.attributes} />
+                <div key={index}>
+                  <ProductItem item={item} />
                 </div>
               );
             })}
@@ -196,35 +204,34 @@ export async function getServerSideProps({ req, resolvedUrl, query }: any) {
   let product: any = {};
   let products: any = [];
   let categories: any = [];
-  try {
-    const res = await fetch(
-      "http://localhost:1337/api/products?populate=images,slug&filters[slug][$eq]=" +
-        query.slug
-    );
-    product = await res.json();
-    product = product.data[0];
-    if (!product) {
-      return {
-        notFound: true,
-      };
-    }
-    let id = product.id;
-    product = product.attributes;
-    product.id = id;
-
-    const res2 = await fetch(
-      "http://localhost:1337/api/products?sort=createdAt%3ADesc&populate=images,slug&pagination[limit]=3"
-    );
-    products = await res2.json();
-    products = products.data;
-
-    const res3 = await fetch(
-      "http://localhost:1337/api/categories?sort=createdAt%3ADesc&populate=image,slug"
-    );
-    categories = await res3.json();
-    categories = categories.data;
-  } catch {}
-  // Remaining code
+  await axios
+    .get(API_URL + "/product/" + query.slug)
+    .then((response) => {
+      product = response.data;
+    })
+    .catch((err) => {});
+  await axios
+    .get(API_URL + "/categories")
+    .then((response) => {
+      categories = response.data;
+    })
+    .catch((err) => {});
+  await axios
+    .get(API_URL + "/latestProducts")
+    .then((response) => {
+      products = response.data;
+    })
+    .catch((err) => {});
+  console.log(product);
+  if (!product) {
+    return {
+      redirect: {
+        permanent: false,
+        destination: "/404",
+      },
+      props: {},
+    };
+  }
   return {
     props: {
       product,

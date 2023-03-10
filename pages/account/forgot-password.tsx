@@ -1,7 +1,7 @@
-import Header from '../../layout/Header';
-import Footer from '../../layout/Footer';
-import Link from 'next/link';
-import { useRouter } from 'next/router';
+import Header from "../../layout/Header";
+import Footer from "../../layout/Footer";
+import Link from "next/link";
+import { useRouter } from "next/router";
 
 function ForgotPassword() {
   const router = useRouter();

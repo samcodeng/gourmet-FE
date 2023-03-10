@@ -4,14 +4,16 @@ import ProductItem from "../../components/ProductItem";
 import Footer from "../../layout/Footer";
 import { Parallax } from "react-parallax";
 import { useRouter } from "next/router";
+import { createClient } from "contentful";
 
 function Category({ products, categories }: any) {
   const route = useRouter();
+  console.log(products);
   const category = () => {
     let title: any;
     categories.filter((el: any) => {
-      if (el.attributes.slug == route.query.slug) {
-        title = el.attributes.title;
+      if (el.fields.slug == route.query.slug) {
+        title = el.fields.title;
       }
     });
     return title;
@@ -45,7 +47,7 @@ function Category({ products, categories }: any) {
             {products.map((item: any, index: number) => {
               return (
                 <div key={index}>
-                  <ProductItem item={item.attributes} />
+                  <ProductItem item={item.fields} />
                 </div>
               );
             })}
@@ -60,22 +62,31 @@ function Category({ products, categories }: any) {
 export default Category;
 
 export async function getServerSideProps({ params }: any) {
+  const client = createClient({
+    space: `${process.env.CONTENTFUL_SPACE}`,
+    accessToken: `${process.env.CONTENTFUL_KEY}`,
+  });
   let products: any = [];
   let categories: any = [];
   try {
-    const res = await fetch(
-      "http://localhost:1337/api/products?filters[categories][slug][$in][0]=" +
-        params.slug +
-        "&sort=createdAt%3ADesc&populate=images,slug"
-    );
-    products = await res.json();
-    products = products.data;
-    const res2 = await fetch(
-      "http://localhost:1337/api/categories?sort=createdAt%3ADesc&populate=image,slug"
-    );
-    categories = await res2.json();
-    categories = categories.data;
-  } catch {}
+    const res2 = await client.getEntries({
+      content_type: "categories",
+    });
+    categories = res2.items;
+    let category = categories.filter((el: any) => {
+      if (el.fields.slug == params.slug) {
+        return el;
+      }
+    });
+    console.log(category[0].sys.id);
+    const res = await client.getEntries({
+      content_type: "products",
+      "fields.category.sys.id": category[0].sys.id,
+    });
+    products = await res.items;
+  } catch (err) {
+    console.log(err);
+  }
   return {
     props: {
       products,

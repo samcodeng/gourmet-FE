@@ -1,58 +1,44 @@
 import Header from "../../../layout/Header";
 import Footer from "../../../layout/Footer";
 import { useRouter } from "next/router";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { AppContext } from "@/context/AppContext";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import * as cookie from "cookie";
+import { API_URL } from "@/helpers/constants";
 
-function Address() {
+function Address({ user }: any) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
-  const [firstName, setfirstName] = useState("");
-  const [firstNameError, setfirstNameError] = useState("");
-  const [lastName, setlastName] = useState("");
-  const [lastNameError, setlastNameError] = useState("");
-  const [number, setnumber] = useState("");
-  const [numberError, setnumberError] = useState("");
-  const [alternateNumber, setalternateNumber] = useState("");
-  const [alternateNumberError, setaltNumberError] = useState("");
-  const [address, setaddress] = useState("");
-  const [addressError, setaddressError] = useState("");
-  const [zipcode, setzipcode] = useState("");
-  const [zipcodeError, setzipcodeError] = useState("");
-  const [state, setstate] = useState("");
-  const [stateError, setstateError] = useState("");
-  const [city, setcity] = useState("");
-  const [cityError, setcityError] = useState("");
-  const { user, getUser, hotReload, setHotReload } = useContext(AppContext);
+  const refContainer = useRef(null);
+  const firstName = useRef<any>(null);
+  const lastName = useRef<any>(null);
+  const number = useRef<any>(null);
+  const alternateNumber = useRef<any>(null);
+  const address = useRef<any>(null);
+  const zipcode = useRef<any>(null);
+  const state = useRef<any>(null);
+  const city = useRef<any>(null);
+  const [errors, seterrors] = useState<any>({});
+  const [addressed, setaddressed] = useState<any>({});
+  const { savedAddress } = useContext(AppContext);
   useEffect(() => {
     const cred = async () => {
-      console.log(router.query.id);
-      if (user.jwt == undefined) {
-        await getUser();
+      if (savedAddress) {
+        setaddressed(savedAddress);
       } else {
         axios
-          .get("http://localhost:1337/api/addresses/" + router.query.id, {
+          .get(API_URL + "/address/" + router.query.id, {
             headers: {
               "Content-Type": "application/json",
-              Authorization: `Bearer ${user.jwt}`,
+              Authorization: `Bearer ${user.token}`,
             },
           })
           .then((response) => {
-            console.log(response.data.data);
-            let data = response.data.data.attributes;
-            setfirstName(data.firstName);
-            setlastName(data.lastName);
-            setcity(data.city);
-            setstate(data.state);
-            setzipcode(data.zipcode);
-            setaddress(data.address);
-            setnumber(data.number);
-            setalternateNumber(
-              data.alternateNumber ? data.alternateNumber : ""
-            );
+            let data = response.data;
+            setaddressed(data);
           })
           .catch(() => {});
       }
@@ -62,25 +48,23 @@ function Address() {
   const add = () => {
     setLoading(true);
     axios
-      .put(
-        "http://localhost:1337/api/addresses/" + router.query.id,
+      .post(
+        API_URL + "/updateAddress/",
         {
-          data: {
-            number: number,
-            alternateNumber: alternateNumber,
-            firstName: firstName,
-            lastName: lastName,
-            zipcode: zipcode,
-            city: city,
-            state: state,
-            address: address,
-            user: user.user.id,
-          },
+          phone_number: number.current.value,
+          alt_phone_number: alternateNumber.current.value,
+          first_name: firstName.current.value,
+          last_name: lastName.current.value,
+          zip_code: zipcode.current.value,
+          city: city.current.value,
+          state: state.current.value,
+          address: address.current.value,
+          id: router.query.id,
         },
         {
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${user.jwt}`,
+            Authorization: `Bearer ${user.token}`,
           },
         }
       )
@@ -113,25 +97,6 @@ function Address() {
       });
   };
 
-  function isEnableAddress() {
-    return (
-      firstName != "" &&
-      firstNameError == "" &&
-      lastName != "" &&
-      lastNameError == "" &&
-      address != "" &&
-      addressError == "" &&
-      zipcode != "" &&
-      zipcodeError == "" &&
-      state != "" &&
-      stateError == "" &&
-      number != "" &&
-      numberError == "" &&
-      alternateNumberError == "" &&
-      city != "" &&
-      cityError == ""
-    );
-  }
   return (
     <>
       <ToastContainer />
@@ -146,96 +111,71 @@ function Address() {
           <h1>Address</h1>
           <div className="auth-select active ">
             <form onSubmit={(e) => e.preventDefault()}>
-              <label className="addLabel">First Name</label>
               <input
                 className="m-input"
                 placeholder="First Name"
-                value={firstName}
-                onChange={(event) => {
-                  setfirstName(event.target.value);
-                }}
+                defaultValue={addressed?.first_name}
+                ref={firstName}
               />
-              {firstNameError && <p className="error">{firstNameError}</p>}
-              <label className="addLabel">Last Name</label>
+              <span className="error">{errors?.first_name}</span>
+
               <input
                 className="m-input"
                 placeholder="Last Name"
-                value={lastName}
-                onChange={(event) => {
-                  setlastName(event.target.value);
-                }}
+                defaultValue={addressed?.last_name}
+                ref={lastName}
               />
-              {lastNameError && <p className="error">{lastNameError}</p>}
+              <span className="error">{errors?.last_name}</span>
 
-              <label className="addLabel">Phone Number</label>
               <input
                 className="m-input"
                 placeholder="Phone number"
-                value={number}
-                onChange={(event) => {
-                  setnumber(event.target.value);
-                }}
+                defaultValue={addressed?.phone_number}
+                ref={number}
               />
-              {numberError && <p className="error">{numberError}</p>}
+              <span className="error">{errors?.phone_number}</span>
 
-              <label className="addLabel">Alt. Phone number (optional)</label>
               <input
                 className="m-input"
                 placeholder="Alt. Phone number (optional)"
-                value={alternateNumber}
-                onChange={(event) => {
-                  setalternateNumber(event.target.value);
-                }}
+                ref={alternateNumber}
+                defaultValue={addressed?.alt_phone_number}
               />
-              {alternateNumberError && (
-                <p className="error">{alternateNumberError}</p>
-              )}
+              <span className="error">{errors?.alt_phone_number}</span>
 
               <input
                 className="m-input"
                 placeholder="Address"
-                value={address}
-                onChange={(event) => {
-                  setaddress(event.target.value);
-                }}
+                ref={address}
+                defaultValue={addressed?.address}
               />
-              {addressError && <p className="error">{addressError}</p>}
-              <label className="addLabel">Zipcode</label>
+              <span className="error">{errors?.address}</span>
+
               <input
                 className="m-input"
-                placeholder="Zip Code"
-                value={zipcode}
-                onChange={(event) => {
-                  setzipcode(event.target.value);
-                }}
+                placeholder="Zip Code (optional)"
+                ref={zipcode}
+                defaultValue={addressed?.zip_code}
               />
-              {zipcodeError && <p className="error">{zipcodeError}</p>}
-              <label className="addLabel">State</label>
+              <span className="error">{errors?.zip_code}</span>
+
               <input
                 className="m-input"
                 placeholder="State"
-                value={state}
-                onChange={(event) => {
-                  setstate(event.target.value);
-                }}
+                ref={state}
+                defaultValue={addressed?.state}
               />
-              {stateError && <p className="error">{stateError}</p>}
-              <label className="addLabel">City</label>
+              <span className="error">{errors?.state}</span>
+
               <input
                 className="m-input"
                 placeholder="City"
-                value={city}
-                onChange={(event) => {
-                  setcity(event.target.value);
-                }}
+                ref={city}
+                defaultValue={addressed?.city}
               />
-              {cityError && <p className="error">{cityError}</p>}
+              <span className="error">{errors?.city}</span>
 
-              <button
-                className="p-btn p-btn2"
-                style={{ opacity: isEnableAddress() ? 1 : 0.8 }}
-                onClick={() => (isEnableAddress() ? add() : "")}
-              >
+              <button className="p-btn p-btn2" onClick={() => add()}>
                 <span>UPDATE ADDRESS</span>{" "}
                 {loading && (
                   <div className="lds-ripple">
@@ -254,3 +194,29 @@ function Address() {
 }
 
 export default Address;
+
+export async function getServerSideProps(context: any) {
+  let cookies = context.req.headers.cookie;
+  let userInfo;
+  let user;
+  if (cookies) {
+    cookies = cookie.parse(cookies);
+    userInfo = cookies.gourmetUser;
+    if (userInfo) {
+      user = JSON.parse(userInfo);
+    }
+  }
+  if (userInfo) {
+    return {
+      props: { user },
+    };
+  } else {
+    return {
+      redirect: {
+        permanent: false,
+        destination: "/account/auth",
+      },
+      props: {},
+    };
+  }
+}

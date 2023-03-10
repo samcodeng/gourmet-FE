@@ -7,7 +7,11 @@ import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-function PersonalDetails() {
+import Cookies from "js-cookie";
+import * as cookie from "cookie";
+import { API_URL } from "@/helpers/constants";
+
+function PersonalDetails({ user }: any) {
   const [loading, setLoading] = useState(false);
   const [firstName, setfirstName] = useState("");
   const [firstNameError, setfirstNameError] = useState("");
@@ -17,17 +21,14 @@ function PersonalDetails() {
   const [numberError, setnumberError] = useState("");
   const [alternateNumber, setalternateNumber] = useState("");
   const [alternateNumberError, setaltNumberError] = useState("");
-  const { user, getUser } = useContext(AppContext);
   useEffect(() => {
     const cred = async () => {
-      if (user.jwt == undefined) {
-        await getUser();
-      }
-      setfirstName(user?.user?.firstName ? user?.user?.firstName : "");
-      setlastName(user?.user?.lastName ? user?.user?.lastName : "");
-      setnumber(user?.user?.number ? user?.user?.number : "");
+      console.log(user);
+      setfirstName(user?.user?.first_name ? user?.user?.first_name : "");
+      setlastName(user?.user?.last_name ? user?.user?.last_name : "");
+      setnumber(user?.user?.phone ? user?.user?.phone : "");
       setalternateNumber(
-        user?.user?.alternateNumber ? user?.user?.alternateNumber : ""
+        user?.user?.alt_phone_number ? user?.user?.alt_phone_number : ""
       );
     };
     cred();
@@ -35,18 +36,18 @@ function PersonalDetails() {
   const update = () => {
     setLoading(true);
     axios
-      .put(
-        "http://localhost:1337/api/users/" + user.user.id + "/",
+      .post(
+        API_URL + "/updateProfile",
         {
-          number: number,
-          alternateNumber: alternateNumber,
-          firstName: firstName,
-          lastName: lastName,
+          phone: number,
+          alt_phone_number: alternateNumber,
+          first_name: firstName,
+          last_name: lastName,
         },
         {
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${user.jwt}`,
+            Authorization: `Bearer ${user.token}`,
           },
         }
       )
@@ -65,10 +66,9 @@ function PersonalDetails() {
         let newUser = user;
         newUser.user = response.data;
         newUser = JSON.stringify(newUser);
-        localStorage.setItem(
-          "1ooampmsxmaopiyquqioamnomdiibsuvbubeiiowp",
-          newUser
-        );
+        Cookies.set("gourmetUser", newUser, {
+          expires: 7,
+        });
       })
       .catch((e) => {
         console.log(e);
@@ -161,3 +161,28 @@ function PersonalDetails() {
 }
 
 export default PersonalDetails;
+export async function getServerSideProps(context: any) {
+  let cookies = context.req.headers.cookie;
+  let userInfo;
+  let user;
+  if (cookies) {
+    cookies = cookie.parse(cookies);
+    userInfo = cookies.gourmetUser;
+    if (userInfo) {
+      user = JSON.parse(userInfo);
+    }
+  }
+  if (userInfo) {
+    return {
+      props: { user },
+    };
+  } else {
+    return {
+      redirect: {
+        permanent: false,
+        destination: "/account/auth",
+      },
+      props: {},
+    };
+  }
+}

@@ -9,6 +9,12 @@ import {
   validateEmail,
   validatePassword,
 } from "@/helpers/validate";
+import { API_URL } from "@/helpers/constants";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
+import Cookies from "js-cookie";
+import * as cookie from "cookie";
 
 function Account() {
   const [active, setActive] = useState(1);
@@ -28,17 +34,16 @@ function Account() {
   const [passwordError, setPasswordError] = useState("");
   const signIn = () => {
     setloading(true);
-    console.log(email);
     axios
-      .post("http://localhost:1337/api/auth/local/", {
-        identifier: email,
+      .post(API_URL + "/login", {
+        email: email,
         password: password,
       })
       .then((response) => {
-        localStorage.setItem(
-          "1ooampmsxmaopiyquqioamnomdiibsuvbubeiiowp",
-          JSON.stringify(response.data)
-        );
+        let user = response.data;
+        Cookies.set("gourmetUser", JSON.stringify(response.data), {
+          expires: 7,
+        });
         setloading(false);
         router.push("/account");
       })
@@ -50,34 +55,34 @@ function Account() {
   const signUp = () => {
     setloading(true);
     axios
-      .post("http://localhost:1337/api/auth/local/register", {
+      .post(API_URL + "/signup", {
         email: email,
         username: email,
         password: password,
-        firstName: firstName,
-        lastName: lastName,
+        first_name: firstName,
+        last_name: lastName,
       })
       .then((response) => {
-        localStorage.setItem(
-          "1ooampmsxmaopiyquqioamnomdiibsuvbubeiiowp",
-          JSON.stringify(response.data)
-        );
-        console.log(response.data);
+        let user = response.data;
+        Cookies.set("gourmetUser", JSON.stringify(response.data), {
+          expires: 7,
+        });
         setloading(false);
         router.push("/account");
       })
-      .catch((e) => {
-        if (e.response.data.error.message) {
-          if (
-            (e.response.data.error.message =
-              "Email or Username are already taken")
-          ) {
-            let nn = { ...errors };
-            nn.email = "Email already taken";
-            setErrors(nn);
-          }
-        }
+      .catch((error) => {
+        toast.error("Failed", {
+          position: "top-right",
+          autoClose: 1000,
+          hideProgressBar: true,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
         setloading(false);
+        setErrors(error?.response?.data?.errors);
       });
   };
   function isEnableSignUp() {
@@ -93,6 +98,7 @@ function Account() {
   return (
     <>
       <Header />
+      <ToastContainer />
       <div className="auth-wrap">
         <div className="wrap">
           <h1>Welcome Back</h1>
@@ -121,6 +127,7 @@ function Account() {
                   validateEmail(event.target.value, setEmailError);
                 }}
                 value={email}
+                autoComplete="false"
               />
               <div className="m-input-wrap">
                 <input
@@ -140,7 +147,7 @@ function Account() {
                   show
                 </button>
               </div>
-              {error && <p className="error">Invalid email or password</p>}
+              {error && <p className="mt-0 error">Invalid email or password</p>}
 
               <Link href="/account/forgot-password" className="forgot">
                 Forgot password?
@@ -171,22 +178,20 @@ function Account() {
                 placeholder="First name"
                 onChange={(event) => setfirstName(event.target.value)}
               />
-              {firstNameError && <p className="error">{firstNameError}</p>}
+              <span className="error">{errors?.first_name}</span>
               <input
                 className="m-input"
                 placeholder="Last name"
                 onChange={(event) => setlastName(event.target.value)}
               />
-              {lastNameError && <p className="error">{lastNameError}</p>}
+              <span className="error">{errors?.last_name}</span>
               <input
                 className="m-input"
                 placeholder="Email"
                 onChange={(event) => setEmail(event.target.value)}
               />
-              {emailError ||
-                (errors.email && (
-                  <p className="error">{emailError || errors.email}</p>
-                ))}
+              <span className="error">{errors?.email || emailError}</span>
+
               <div className="m-input-wrap">
                 <input
                   className="m-input"
@@ -202,7 +207,7 @@ function Account() {
                   show
                 </button>
               </div>
-              {passwordError && <p className="error">{passwordError}</p>}
+              <span className="error">{errors?.password || passwordError}</span>
               <button
                 className="p-btn p-btn2"
                 style={{ opacity: isEnableSignUp() ? 1 : 0.8 }}
@@ -226,3 +231,25 @@ function Account() {
 }
 
 export default Account;
+
+export async function getServerSideProps(context: any) {
+  let cookies = context.req.headers.cookie;
+  let userInfo;
+  if (cookies) {
+    cookies = cookie.parse(cookies);
+    userInfo = cookies.gourmetUser;
+  }
+  if (userInfo) {
+    return {
+      redirect: {
+        permanent: false,
+        destination: "/account",
+      },
+      props: {},
+    };
+  } else {
+    return {
+      props: {},
+    };
+  }
+}

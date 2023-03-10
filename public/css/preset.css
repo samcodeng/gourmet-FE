@@ -284,6 +284,9 @@ button {
 }
 .error {
   color: tomato !important;
+  position: relative;
+  top: -16px;
+  font-size: 13px;
 }
 .success {
   color: rgb(60, 159, 87) !important;

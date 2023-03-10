@@ -8,10 +8,11 @@ import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { validatePassword } from "@/helpers/validate";
-function Password() {
+import Cookies from "js-cookie";
+import * as cookie from "cookie";
+import { API_URL } from "@/helpers/constants";
+function Password({ user }: any) {
   const router = useRouter();
-  const { user, getUser } = useContext(AppContext);
-
   const [loading, setLoading] = useState(false);
   const [currentPassword, setcurrentPassword] = useState("");
   const [currentPasswordError, setcurrentPasswordError] = useState("");
@@ -20,33 +21,24 @@ function Password() {
   const [confirmPassword, setconfirmPassword] = useState("");
   const [confirmPasswordError, setconfirmPasswordError] = useState("");
 
-  useEffect(() => {
-    const cred = async () => {
-      if (user.jwt == undefined) {
-        await getUser();
-      }
-    };
-    cred();
-  }, [user]);
   const update = () => {
     setLoading(true);
     axios
       .post(
-        "http://localhost:1337/api/auth/change-password",
+        API_URL + "/updatePassword",
         {
-          currentPassword: currentPassword,
-          password: newPassword,
-          passwordConfirmation: newPassword,
+          password: currentPassword,
+          new_password: newPassword,
         },
         {
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${user.jwt}`,
+            Authorization: `Bearer ${user.token}`,
           },
         }
       )
       .then((response) => {
-        toast.success("Profile updated!", {
+        toast.success("Password updated!", {
           position: "top-right",
           autoClose: 5000,
           hideProgressBar: false,
@@ -62,7 +54,7 @@ function Password() {
         setconfirmPassword("");
       })
       .catch((e) => {
-        toast.error(`${e?.response?.data?.error?.message}`, {
+        toast.error(`${e?.response?.data?.message}`, {
           position: "top-right",
           autoClose: 5000,
           hideProgressBar: false,
@@ -109,7 +101,7 @@ function Password() {
                 }}
               />
               {currentPasswordError && (
-                <p className="error">{currentPasswordError}</p>
+                <p className="mt-0 error">{currentPasswordError}</p>
               )}
               <input
                 className="m-input"
@@ -121,7 +113,9 @@ function Password() {
                   validatePassword(newPassword, setnewPasswordError);
                 }}
               />
-              {newPasswordError && <p className="error">{newPasswordError}</p>}
+              {newPasswordError && (
+                <p className="mt-0 error">{newPasswordError}</p>
+              )}
 
               <input
                 className="m-input"
@@ -138,7 +132,7 @@ function Password() {
                 }}
               />
               {confirmPasswordError && (
-                <p className="error">{confirmPasswordError}</p>
+                <p className="mt-0 error">{confirmPasswordError}</p>
               )}
 
               <button
@@ -164,3 +158,29 @@ function Password() {
 }
 
 export default Password;
+
+export async function getServerSideProps(context: any) {
+  let cookies = context.req.headers.cookie;
+  let userInfo;
+  let user;
+  if (cookies) {
+    cookies = cookie.parse(cookies);
+    userInfo = cookies.gourmetUser;
+    if (userInfo) {
+      user = JSON.parse(userInfo);
+    }
+  }
+  if (userInfo) {
+    return {
+      props: { user },
+    };
+  } else {
+    return {
+      redirect: {
+        permanent: false,
+        destination: "/account/auth",
+      },
+      props: {},
+    };
+  }
+}

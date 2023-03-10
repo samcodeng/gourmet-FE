@@ -1,6 +1,8 @@
 import { useContext } from "react";
 import { AppContext } from "../context/AppContext";
 import Link from "next/link";
+import Image from "next/image";
+import { BACKEND_URL } from "@/helpers/constants";
 
 function CartDrawer() {
   const {
@@ -12,13 +14,14 @@ function CartDrawer() {
     removefromcart,
     deletefromcart,
     addtocart,
+    formatNumber,
   } = useContext(AppContext);
   const subtotal = () => {
     let price = 0;
     cartitems.filter((el: any) => {
-      price = price + el.sale_price * el.count;
+      price = price + el.price * el.count;
     });
-    return price;
+    return formatNumber(price);
   };
   return (
     <>
@@ -64,7 +67,7 @@ function CartDrawer() {
                       x
                     </span>
                     <div>
-                      <p>{item.title}</p>
+                      <p>{item.name}</p>
                       <div className="ff">
                         <div className="form">
                           <button
@@ -92,17 +95,14 @@ function CartDrawer() {
                             +
                           </button>
                         </div>
-                        <h3>
-                          {currency} {item.sale_price}
-                        </h3>
+                        <h3>₦{formatNumber(item.price)}</h3>
                       </div>
                     </div>
-                    <img
-                      src={
-                        "http://localhost:1337" +
-                        item.images.data[0].attributes.url
-                      }
-                      alt={item?.title}
+                    <Image
+                      src={BACKEND_URL + "/images/" + item?.cover_image}
+                      width={50}
+                      height={50}
+                      alt={item.name}
                     />
                   </Link>
                 );
@@ -117,9 +117,7 @@ function CartDrawer() {
               <div className="cart-footer">
                 <h1>
                   Subtotal
-                  <span>
-                    {currency} {subtotal()}
-                  </span>
+                  <span>₦ {subtotal()}</span>
                 </h1>
                 <Link href="/checkout" onClick={() => setopencart(false)}>
                   <button className="p-btn p-btn2 hvr-bounce-to-bottom">

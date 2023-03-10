@@ -12,7 +12,7 @@ function Footer() {
               iusto nostrum, consequuntur placeat suscipit. Molestiae eaque ipsa
               a ipsam fugit unde est at, amet quo vel aspernatur possimus.
             </p>
-            <ul className="w-full flex items-center justify-center my-4 text-white text-sm">
+            <ul className="flex items-center justify-center w-full my-4 text-sm text-white">
               <li>
                 <a className="mx-3">About Us</a>
               </li>
@@ -35,7 +35,7 @@ function Footer() {
                 <a className="mx-3">Contact Us</a>
               </li>
             </ul>
-            <ul className="flex items-center justify-center socials mb-4">
+            <ul className="flex items-center justify-center mb-4 socials">
               <li>
                 <a className="mx-3">
                   <i className="fab fa-facebook-f"></i>
@@ -56,14 +56,14 @@ function Footer() {
           </div>
         </div>
       </Parallax>
-      <div className="bg-white p-6">
-        <div className="w-full items-center justify-center payments flex mb-4">
-          <img src="/images/Visa.png" />
-          <img src="/images/Mastercard.png" />
-          <img src="/images/PayPal.png" />
-          <img src="/images/Amex.png" />
+      <div className="p-6 bg-white">
+        <div className="flex items-center justify-center w-full mb-4 payments">
+          <img src="/images/Visa.png" alt="visa" />
+          <img src="/images/Mastercard.png" alt="mastercard" />
+          <img src="/images/PayPal.png" alt="paypal" />
+          <img src="/images/Amex.png" alt="amex" />
         </div>
-        <p className="text-center text-sm">
+        <p className="text-sm text-center">
           Gourmet Nibbles © 2023. All Rights Reserved.
         </p>
       </div>

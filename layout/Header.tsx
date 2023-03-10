@@ -25,8 +25,6 @@ function Header({ categories }: any) {
     <>
       <Head>
         <meta name="description" content="Gourmet Nibbles skin care" />
-
-        {/* eslint-disable-next-line react/no-unescaped-entities */}
         <title>Gourmet Nibbles — Your Skin At It's Best</title>
       </Head>
       <div className="header">
@@ -55,7 +53,6 @@ function Header({ categories }: any) {
             >
               Our Menu
             </a>
-            <Link href="/reviews">Locations</Link>
           </div>
           <Link href="/">
             <Image
@@ -75,10 +72,15 @@ function Header({ categories }: any) {
                 setsearch(!search);
               }}
             >
-              <Image alt="" src="/images/search.png" width={20} height={20} />
+              <Image
+                alt="search"
+                src="/images/search.png"
+                width={20}
+                height={20}
+              />
             </a>
             <Link href="/account" className="sm-no">
-              <Image alt="" src="/images/user.png" width={20} height={20} />
+              <Image alt="user" src="/images/user.png" width={20} height={20} />
             </Link>
             <Link
               href="/cart"
@@ -87,7 +89,7 @@ function Header({ categories }: any) {
                 setopencart(true);
               }}
             >
-              <Image alt="" src="/images/bag.png" width={20} height={20} />
+              <Image alt="cart" src="/images/bag.png" width={20} height={20} />
               <span id="cartCount">{count}</span>
             </Link>
           </div>
@@ -104,7 +106,7 @@ function Header({ categories }: any) {
           />
           <button className="m-btn">
             <Image
-              alt=""
+              alt="search"
               src="/images/search.png"
               width={20}
               height={20}
@@ -114,7 +116,7 @@ function Header({ categories }: any) {
       </div>
       <div className={`side-nav ${toggle ? "active" : ""}`}>
         <Link href="/shop">Shop</Link>
-        <Link href="/reviews">Reviews</Link>
+        <Link href="/locations">Locations</Link>
         <Link href="/account">My Account</Link>
         <a
           onClick={(e) => {
@@ -126,7 +128,12 @@ function Header({ categories }: any) {
           className="sm-no"
         >
           {currency}
-          <Image alt="" src="/images/arrow-down.png" width={20} height={20} />
+          <Image
+            alt="toggle"
+            src="/images/arrow-down.png"
+            width={20}
+            height={20}
+          />
         </a>
       </div>
     </>

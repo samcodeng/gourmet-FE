@@ -27,18 +27,27 @@
     ]
   },
   "dependencies": {
+    "@contentful/rich-text-react-renderer": "^15.16.2",
+    "@react-google-maps/api": "^2.18.1",
     "axios": "^1.2.0",
+    "contentful": "^9.3.3",
+    "cookie": "^0.5.0",
+    "js-cookie": "^3.0.1",
     "keen-slider": "^6.8.5",
+    "moment": "^2.29.4",
     "next": "^13.0.5",
+    "nextjs-progressbar": "^0.0.16",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-modal": "3.15.1",
     "react-parallax": "^3.5.1",
-    "react-toastify": "^9.1.1"
+    "react-toastify": "^9.1.1",
+    "use-places-autocomplete": "^4.0.0"
   },
   "devDependencies": {
     "@commitlint/cli": "16.1.0",
     "@commitlint/config-conventional": "16.0.0",
+    "@types/cookie": "^0.5.1",
     "@types/node": "16.11.21",
     "@types/react": "17.0.38",
     "@types/react-dom": "17.0.11",
