@@ -11,6 +11,7 @@ import { API_URL, BACKEND_URL } from "@/helpers/constants";
 import Image from "next/image";
 import moment from "moment";
 import Link from "next/link";
+import back from "../../../public/images/arrow-down.png";
 
 function Address({ user }: any) {
   const router = useRouter();
@@ -37,16 +38,17 @@ function Address({ user }: any) {
       }
     };
     cred();
-  }, [user, router]);
+  }, [router]);
   return (
     <>
       <ToastContainer />
       <Header />
       <div className="auth-wrap">
-        <img
-          src="/images/arrow-down.png"
+        <Image
+          src={back}
           className="goBack"
           onClick={() => router.back()}
+          alt="back"
         />
         <div className="wrap f-p">
           <h1>Order</h1>
@@ -54,6 +56,7 @@ function Address({ user }: any) {
             return (
               <Link
                 href={`/product/${item.slug}`}
+                key={index}
                 className="cursor-pointer addressSmall"
               >
                 <div className="flex">

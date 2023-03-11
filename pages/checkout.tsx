@@ -17,7 +17,7 @@ import { API_URL, BACKEND_URL } from "@/helpers/constants";
 
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
+import down from "../public/images/arrow-down.png";
 import Cookies from "js-cookie";
 import * as cookie from "cookie";
 
@@ -245,7 +245,12 @@ function CheckOut({ user }: any) {
             router.back();
           }}
         >
-          <img src="/images/arrow-down.png" className="goBack goBack1" />
+          <Image
+            src={down}
+            className="goBack goBack1"
+            onClick={() => router.back()}
+            alt="back"
+          />
         </Link>
         {!success && (
           <div className="wrap">

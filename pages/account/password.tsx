@@ -11,6 +11,9 @@ import { validatePassword } from "@/helpers/validate";
 import Cookies from "js-cookie";
 import * as cookie from "cookie";
 import { API_URL } from "@/helpers/constants";
+import back from "../../public/images/arrow-down.png";
+import Image from "next/image";
+
 function Password({ user }: any) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
@@ -82,10 +85,11 @@ function Password({ user }: any) {
       <ToastContainer />
       <Header />
       <div className="auth-wrap">
-        <img
-          src="/images/arrow-down.png"
+        <Image
+          src={back}
           className="goBack"
           onClick={() => router.back()}
+          alt="back"
         />
         <div className="wrap f-p">
           <h1>Password</h1>

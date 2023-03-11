@@ -29,6 +29,7 @@
   "dependencies": {
     "@contentful/rich-text-react-renderer": "^15.16.2",
     "@react-google-maps/api": "^2.18.1",
+    "@types/js-cookie": "^3.0.3",
     "axios": "^1.2.0",
     "contentful": "^9.3.3",
     "cookie": "^0.5.0",

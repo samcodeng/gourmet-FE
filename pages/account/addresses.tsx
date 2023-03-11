@@ -9,6 +9,8 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { API_URL } from "@/helpers/constants";
 import * as cookie from "cookie";
+import back from "../../public/images/arrow-down.png";
+import Image from "next/image";
 
 function Addresses({ user }: any) {
   const [loading, setLoading] = useState(false);
@@ -81,10 +83,11 @@ function Addresses({ user }: any) {
       <ToastContainer />
       <Header />
       <div className="auth-wrap">
-        <img
-          src="/images/arrow-down.png"
+        <Image
+          src={back}
           className="goBack"
-          onClick={() => router.push("/account")}
+          onClick={() => router.back()}
+          alt="back"
         />
         <div className="wrap">
           <h1>Addresses</h1>

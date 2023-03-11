@@ -11,6 +11,7 @@ import { API_URL, BACKEND_URL } from "@/helpers/constants";
 import axios from "axios";
 import moment from "moment";
 import Image from "next/image";
+import back from "../../public/images/arrow-down.png";
 
 function Orders({ user }: any) {
   const [open, setopen] = useState(false);
@@ -38,10 +39,11 @@ function Orders({ user }: any) {
     <>
       <Header />
       <div className="auth-wrap">
-        <img
-          src="/images/arrow-down.png"
+        <Image
+          src={back}
           className="goBack"
           onClick={() => router.back()}
+          alt="back"
         />
         <div className="wrap max-w-[600px]">
           <h1>Orders</h1>
@@ -69,7 +71,7 @@ function Orders({ user }: any) {
                       src={
                         BACKEND_URL + "/images/" + item.products[0]?.cover_image
                       }
-                      alt={item.name}
+                      alt={`order${item.id}`}
                       width={60}
                       height={60}
                       className="mr-6 rounded-md"

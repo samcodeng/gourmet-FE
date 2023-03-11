@@ -8,7 +8,8 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import * as cookie from "cookie";
 import { API_URL } from "@/helpers/constants";
-
+import Image from "next/image";
+import back from "../../public/images/arrow-down.png";
 function AddAddress({ user }: any) {
   const [loading, setLoading] = useState(false);
   const refContainer = useRef(null);
@@ -82,8 +83,8 @@ function AddAddress({ user }: any) {
       <ToastContainer />
       <Header />
       <div className="auth-wrap">
-        <img
-          src="/images/arrow-down.png"
+        <Image
+          src={back}
           className="goBack"
           onClick={() => router.back()}
           alt="back"

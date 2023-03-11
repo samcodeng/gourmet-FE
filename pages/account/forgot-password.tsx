@@ -2,6 +2,8 @@ import Header from "../../layout/Header";
 import Footer from "../../layout/Footer";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import Image from "next/image";
+import back from "../../public/images/arrow-down.png";
 
 function ForgotPassword() {
   const router = useRouter();
@@ -10,7 +12,12 @@ function ForgotPassword() {
       <Header />
       <div className="auth-wrap">
         <Link href="/account/auth">
-          <img src="/images/arrow-down.png" className="goBack" />
+          <Image
+            src={back}
+            className="goBack"
+            onClick={() => router.back()}
+            alt="back"
+          />
         </Link>
         <div className="wrap f-p">
           <h1>Forgot Password</h1>
