@@ -55,14 +55,15 @@ function Header({ categories }: any) {
             </a>
           </div>
           <Link href="/">
-            <Image
+            {/* <Image
               src="/images/logo.png"
               className="logo"
               alt="logo"
               width={148}
               height={76}
               priority
-            />
+            />*/}
+            <h1 className="text-lg font-black">LOGO.</h1>
           </Link>
           <div className="ul-nav ul-nav1">
             <a

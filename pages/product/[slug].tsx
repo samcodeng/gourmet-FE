@@ -10,11 +10,13 @@ import { documentToReactComponents } from "@contentful/rich-text-react-renderer"
 import Image from "next/image";
 import axios from "axios";
 import { API_URL, BACKEND_URL } from "@/helpers/constants";
+import { useRouter } from "next/router";
 
 function Product({ product, products, categories }: any) {
   const { addtocart, formatNumber } = useContext(AppContext);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [loaded, setLoaded] = useState(false);
+  const router = useRouter();
   const [sliderRef, instanceRef] = useKeenSlider<HTMLDivElement>({
     initial: 0,
     slideChanged(slider) {
@@ -24,9 +26,11 @@ function Product({ product, products, categories }: any) {
       setLoaded(true);
     },
   });
+
   const description = () => {
     return <p>{product?.description}</p>;
   };
+
   return (
     <>
       <Header categories={categories} />
@@ -34,13 +38,13 @@ function Product({ product, products, categories }: any) {
       <Parallax
         bgImage={BACKEND_URL + "/images/" + product?.cover_image}
         strength={150}
-        bgImageAlt={product?.title}
+        bgImageAlt={product?.name}
         blur={{ min: -15, max: 15 }}
       >
         <div className="parallax-inner">
           <div className="wrap">
             <h1 className="pt-12 pb-4 text-lg text-center text-white">
-              {product?.title}
+              {product?.name}
             </h1>
           </div>
         </div>
@@ -80,7 +84,7 @@ function Product({ product, products, categories }: any) {
                       >
                         <Image
                           src={BACKEND_URL + "/images/" + item?.image}
-                          alt={item?.title}
+                          alt={item?.name}
                           fill
                         />
                       </div>
@@ -119,7 +123,7 @@ function Product({ product, products, categories }: any) {
           </div>
         </div>
       </div>
-      <div className="featured available">
+      <div className="mt-20 featured available">
         <div className="wrap">
           <h3 className="m-h3">Also Available</h3>
           <div className="grid grid-cols-3 gap-4">
@@ -217,12 +221,13 @@ export async function getServerSideProps({ req, resolvedUrl, query }: any) {
     })
     .catch((err) => {});
   await axios
-    .get(API_URL + "/latestProducts")
+    .get(API_URL + "/randomProducts/" + query.slug)
     .then((response) => {
       products = response.data;
     })
-    .catch((err) => {});
-  console.log(product);
+    .catch((err) => {
+      console.log(err.response.data);
+    });
   if (!product) {
     return {
       redirect: {

@@ -28,11 +28,11 @@ function MenuDrawer({ categories }: any) {
             return (
               <Link
                 key={index}
-                href={`/category/${item?.fields?.slug}`}
+                href={`/category/${item?.slug}`}
                 className="flex items-center"
                 onClick={() => setopenmenu(false)}
               >
-                <span>{item?.fields?.title}</span>
+                <span>{item?.name}</span>
               </Link>
             );
           })}

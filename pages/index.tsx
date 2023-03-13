@@ -46,10 +46,10 @@ export default function Home({ products, categories }: any) {
 
       <div className="main">
         <div className="text">
-          <h1>Your skin at it's best</h1>
+          <h1>Tasty. Delicious</h1>
           <p>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Et,
-            scelerisque ut sapien, posuere non. Faucibus egestas
+            Plain or stuffed & drizzled, with sweet & savoury flavours, for
+            events & personal orders. Treats & drinks too! 👇🏾
           </p>
           <Link href="/shop">
             <button className="p-btn hvr-bounce-to-bottom">
@@ -57,6 +57,7 @@ export default function Home({ products, categories }: any) {
             </button>
           </Link>
         </div>
+        <div className="bg"></div>
       </div>
 
       <div className="featured">
@@ -64,7 +65,7 @@ export default function Home({ products, categories }: any) {
           <div className="flex items-center justify-center">
             <h1 className="mb-4 m-h1">Our Menu</h1>
           </div>
-          <div className="grid grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 gap-2 lg:grid-cols-4 lg:gap-4">
             {categories.map((item: any, index: number) => {
               return (
                 <Link
@@ -95,12 +96,15 @@ export default function Home({ products, categories }: any) {
         <div className="wrap">
           <div className="flex items-center justify-between">
             <h3 className="m-h3">Featured Products</h3>
-            <Link href="/shop" className="mt-0 more">
+            <Link
+              href="/shop"
+              className="hidden mt-0 text-xs more lg:text-sm lg:flex"
+            >
               See all products <img src="/images/arrow-right.png" />
             </Link>
           </div>
 
-          <div className="grid grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 gap-4 lg:grid-cols-4 md:grid-cols-2">
             {products.map((item: any, index: number) => {
               return (
                 <div key={index}>
@@ -109,6 +113,13 @@ export default function Home({ products, categories }: any) {
               );
             })}
           </div>
+          <Link
+            href="/shop"
+            className="flex justify-center mt-4 text-xs more lg:text-sm lg:hidden"
+          >
+            <span className="mr-2">See all products</span>{" "}
+            <img src="/images/arrow-right.png" />
+          </Link>
         </div>
       </div>
 
@@ -154,10 +165,10 @@ export default function Home({ products, categories }: any) {
           <h1 className="mb-4 font-semibold tracking-widest text-center uppercase">
             Locations
           </h1>
-          <div className="flex flex-col items-start justify-center text-center lg:flex-row">
+          <div className="flex flex-col items-center justify-center text-center lg:items-start lg:flex-row">
             <div className="flex flex-col items-center justify-center m-3 lg:m-8 max-w-[300px]">
               <svg
-                className="mb-4"
+                className="mb-2 lg:mb-4"
                 width="24"
                 height="24"
                 viewBox="0 0 24 24"
@@ -165,50 +176,23 @@ export default function Home({ products, categories }: any) {
                 xmlns="http://www.w3.org/2000/svg"
               >
                 <path
-                  d="M12 22C17.5 22 22 17.5 22 12C22 6.5 17.5 2 12 2C6.5 2 2 6.5 2 12C2 17.5 6.5 22 12 22Z"
+                  d="M12 13.4299C12.4097 13.4299 12.8154 13.3492 13.194 13.1924C13.5725 13.0357 13.9165 12.8058 14.2062 12.5161C14.4959 12.2264 14.7257 11.8824 14.8825 11.5039C15.0393 11.1254 15.12 10.7197 15.12 10.3099C15.12 9.90022 15.0393 9.49451 14.8825 9.11597C14.7257 8.73743 14.4959 8.39349 14.2062 8.10377C13.9165 7.81405 13.5725 7.58423 13.194 7.42744C12.8154 7.27064 12.4097 7.18994 12 7.18994C11.1725 7.18994 10.3789 7.51865 9.79383 8.10377C9.20872 8.68888 8.88 9.48247 8.88 10.3099C8.88 11.1374 9.20872 11.931 9.79383 12.5161C10.3789 13.1012 11.1725 13.4299 12 13.4299Z"
                   stroke="black"
                   strokeWidth="1.5"
-                  strokeMiterlimit="10"
                 />
                 <path
-                  d="M13.5 8C10.47 8 8 10.48 8 13.5C8 14.87 9.12 16 10.5 16C13.52 16 16 13.52 16 10.5C16 9.13 14.87 8 13.5 8Z"
+                  d="M3.62001 8.49C5.59001 -0.169998 18.42 -0.159997 20.38 8.5C21.53 13.58 18.37 17.88 15.6 20.54C14.6321 21.4735 13.3398 21.9952 11.995 21.9952C10.6503 21.9952 9.35794 21.4735 8.39001 20.54C5.63001 17.88 2.47001 13.57 3.62001 8.49Z"
                   stroke="black"
                   strokeWidth="1.5"
-                  strokeMiterlimit="10"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
                 />
               </svg>
-              <p>Quick bites / Curbside outlet : SPG (Ikoyi and VI) </p>
+              <p className="text-sm">
+                Quick bites / Curbside outlet : SPG (Ikoyi and VI){" "}
+              </p>
             </div>
             <div className="flex flex-col items-center justify-center m-3 lg:m-8 max-w-[300px]">
               <svg
-                className="mb-4"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M3.62001 8.49C5.59001 -0.169998 18.42 -0.159997 20.38 8.5C21.53 13.58 18.37 17.88 15.6 20.54C14.632 21.4733 13.3397 21.9948 11.995 21.9948C10.6503 21.9948 9.35806 21.4733 8.39001 20.54C5.63001 17.88 2.47001 13.57 3.62001 8.49Z"
-                  stroke="black"
-                  strokeWidth="1.5"
-                />
-                <path
-                  d="M9.25 11.5L10.75 13L14.75 9"
-                  stroke="black"
-                  strokeWidth="1.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-
-              <p> Beach stall : Stuffed Puffs</p>
-            </div>
-            <div className="flex flex-col items-center justify-center m-3 lg:m-8 max-w-[300px]">
-              <svg
-                className="mb-4"
+                className="mb-2 lg:mb-4"
                 width="24"
                 height="24"
                 viewBox="0 0 24 24"
@@ -227,7 +211,32 @@ export default function Home({ products, categories }: any) {
                 />
               </svg>
 
-              <p>Catering: SP Catering and Bespoke event planning</p>
+              <p className="text-sm"> Beach stall : Stuffed Puffs</p>
+            </div>
+            <div className="flex flex-col items-center justify-center m-3 lg:m-8 max-w-[300px]">
+              <svg
+                className="mb-2 lg:mb-4"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M12 13.4299C12.4097 13.4299 12.8154 13.3492 13.194 13.1924C13.5725 13.0357 13.9165 12.8058 14.2062 12.5161C14.4959 12.2264 14.7257 11.8824 14.8825 11.5039C15.0393 11.1254 15.12 10.7197 15.12 10.3099C15.12 9.90022 15.0393 9.49451 14.8825 9.11597C14.7257 8.73743 14.4959 8.39349 14.2062 8.10377C13.9165 7.81405 13.5725 7.58423 13.194 7.42744C12.8154 7.27064 12.4097 7.18994 12 7.18994C11.1725 7.18994 10.3789 7.51865 9.79383 8.10377C9.20872 8.68888 8.88 9.48247 8.88 10.3099C8.88 11.1374 9.20872 11.931 9.79383 12.5161C10.3789 13.1012 11.1725 13.4299 12 13.4299Z"
+                  stroke="black"
+                  strokeWidth="1.5"
+                />
+                <path
+                  d="M3.62001 8.49C5.59001 -0.169998 18.42 -0.159997 20.38 8.5C21.53 13.58 18.37 17.88 15.6 20.54C14.6321 21.4735 13.3398 21.9952 11.995 21.9952C10.6503 21.9952 9.35794 21.4735 8.39001 20.54C5.63001 17.88 2.47001 13.57 3.62001 8.49Z"
+                  stroke="black"
+                  strokeWidth="1.5"
+                />
+              </svg>
+
+              <p className="text-sm">
+                Catering: SP Catering and Bespoke event planning
+              </p>
             </div>
           </div>
         </div>

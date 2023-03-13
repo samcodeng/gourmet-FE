@@ -3,7 +3,7 @@ import { Parallax, Background } from "react-parallax";
 function Footer() {
   return (
     <>
-      <Parallax bgImage="/images/main2.jpg" strength={150}>
+      <Parallax bgImage="/images/main2.jpg" strength={70}>
         <div className="parallax-inner">
           <div className="wrap">
             <p className="text-white max-w-[500px] text-center m-auto">
@@ -12,24 +12,12 @@ function Footer() {
               iusto nostrum, consequuntur placeat suscipit. Molestiae eaque ipsa
               a ipsam fugit unde est at, amet quo vel aspernatur possimus.
             </p>
-            <ul className="flex items-center justify-center w-full my-4 text-sm text-white">
+            <ul className="flex items-center justify-center w-full my-10 text-sm text-white">
               <li>
                 <a className="mx-3">About Us</a>
               </li>
               <li>
-                <a>|</a>
-              </li>
-              <li>
-                <a className="mx-3">Return Policy</a>
-              </li>
-              <li>
-                <a>|</a>
-              </li>
-              <li>
                 <a className="mx-3">Privacy Policy</a>
-              </li>
-              <li>
-                <a>|</a>
               </li>
               <li>
                 <a className="mx-3">Contact Us</a>
