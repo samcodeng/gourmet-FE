@@ -13,6 +13,7 @@ function CartDrawer() {
     cartitems,
     removefromcart,
     deletefromcart,
+    cartQuantity,
     addtocart,
     formatNumber,
   } = useContext(AppContext);
@@ -81,9 +82,16 @@ function CartDrawer() {
                           <input
                             value={item.count}
                             type="number"
-                            onChange={() => {
-                              removefromcart(item);
+                            onChange={(event) => {
+                              cartQuantity({
+                                item: item,
+                                quantity:
+                                  event.target.value === "0"
+                                    ? "1"
+                                    : event.target.value,
+                              });
                             }}
+                            min="1"
                             onClick={(e) => e.preventDefault()}
                           />
                           <button

@@ -1370,12 +1370,13 @@ p.small {
 }
 .cart-item .form {
   border: 1px solid #b5b5b5ad;
-  padding: 1px;
+  padding: 3px;
   border-radius: 2px;
 }
 .cart-item .form button {
   background: transparent;
   border: 0;
+  padding: 3px;
 }
 .cart-item .form input {
   width: 30px;

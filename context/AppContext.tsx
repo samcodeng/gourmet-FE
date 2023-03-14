@@ -58,6 +58,18 @@ export const AppProvider = ({ children }: any) => {
     setcartitems(newitems);
     localStorage.setItem("mcart", JSON.stringify(newitems));
   };
+  const cartQuantity = ({ item, quantity }: any) => {
+    setopencart(true);
+    let newitems: any = [...cartitems];
+    let check = cartitems.filter(function (el: any) {
+      return el.id == item.id;
+    });
+    if (check[0]) {
+      item.count = quantity;
+    }
+    setcartitems(newitems);
+    localStorage.setItem("mcart", JSON.stringify(newitems));
+  };
   const deletefromcart = (id: number) => {
     let newitems: any = [...cartitems];
     newitems = cartitems.filter(function (el: any) {
@@ -115,6 +127,7 @@ export const AppProvider = ({ children }: any) => {
         user,
         openmenu,
         setopenmenu,
+        cartQuantity,
       }}
     >
       {children}
