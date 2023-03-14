@@ -15,7 +15,7 @@ import {
 } from "@/helpers/validate";
 import Image from "next/image";
 import { API_URL, BACKEND_URL } from "@/helpers/constants";
-
+import { v4 as uuid } from "uuid";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import down from "../public/images/arrow-down.png";
@@ -42,7 +42,10 @@ function CheckOut({ user }: any) {
   const [open, setopen] = useState(false);
   const [success, setSuccess] = useState(false);
   const router = useRouter();
-
+  const [reference, setReference] = useState("");
+  useEffect(() => {
+    setReference(uuid());
+  }, [router]);
   ////ADDRESS
 
   const firstName = useRef<any>(null);
@@ -170,8 +173,6 @@ function CheckOut({ user }: any) {
           });
           seterrors(error?.response?.data?.errors);
           setcloading(false);
-          setSuccess(true);
-          //localStorage.deleteItem("mcart");
         });
     } else {
       axios
@@ -212,15 +213,8 @@ function CheckOut({ user }: any) {
   };
 
   //////PAYSTACK/////////////
-  const config = {
-    reference: new Date().getTime(),
-    email: "samueelnd@gmail.com",
-    amount: subtotal() * 1000,
-    publicKey: "pk_test_c9765d4a10ca457b0dac659838eb3ccc798d288b",
-  };
-
   // you can call this function anything
-  const onSuccess = (reference: number) => {
+  const onSuccess = () => {
     // Implementation for whatever you want to do with reference and after success call.
     console.log(reference);
     toast.success("Ordered! 😊", {
@@ -255,7 +249,12 @@ function CheckOut({ user }: any) {
     setcloading(false);
   };
 
-  const initializePayment = usePaystackPayment(config);
+  const initializePayment = usePaystackPayment({
+    reference: reference,
+    email: "samueelnd@gmail.com",
+    amount: subtotal() * 1000,
+    publicKey: "pk_test_c9765d4a10ca457b0dac659838eb3ccc798d288b",
+  });
   return (
     <>
       <ToastContainer />
