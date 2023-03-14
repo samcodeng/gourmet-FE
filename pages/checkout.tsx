@@ -7,6 +7,7 @@ import { useRouter } from "next/router";
 import Link from "next/link";
 import img from "../public/images/success.gif";
 import axios from "axios";
+import { usePaystackPayment } from "react-paystack";
 import {
   isValidEmail,
   validateEmail,
@@ -154,19 +155,7 @@ function CheckOut({ user }: any) {
           }
         )
         .then((response) => {
-          toast.success("Ordered! 😊", {
-            position: "top-right",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "dark",
-          });
-          setcloading(false);
-          setSuccess(true);
-          localStorage.deleteItem("mcart");
+          initializePayment(onSuccess, onClose);
         })
         .catch((error) => {
           toast.error("Error!", {
@@ -203,19 +192,7 @@ function CheckOut({ user }: any) {
           }
         )
         .then((response) => {
-          toast.success("Ordered! 😊", {
-            position: "top-right",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "dark",
-          });
-          setcloading(false);
-          setSuccess(true);
-          //localStorage.deleteItem("mcart");
+          initializePayment(onSuccess, onClose);
         })
         .catch((error) => {
           toast.error("Error!", {
@@ -233,6 +210,52 @@ function CheckOut({ user }: any) {
         });
     }
   };
+
+  //////PAYSTACK/////////////
+  const config = {
+    reference: new Date().getTime(),
+    email: "samueelnd@gmail.com",
+    amount: subtotal() * 1000,
+    publicKey: "pk_test_c9765d4a10ca457b0dac659838eb3ccc798d288b",
+  };
+
+  // you can call this function anything
+  const onSuccess = (reference: number) => {
+    // Implementation for whatever you want to do with reference and after success call.
+    console.log(reference);
+    toast.success("Ordered! 😊", {
+      position: "top-right",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "dark",
+    });
+    setcloading(false);
+    setSuccess(true);
+    //localStorage.deleteItem("mcart");
+  };
+
+  // you can call this function anything
+  const onClose = () => {
+    // implementation for  whatever you want to do when the Paystack dialog closed.
+    console.log("closed");
+    toast.warn("Paystack closed!", {
+      position: "top-right",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "dark",
+    });
+    setcloading(false);
+  };
+
+  const initializePayment = usePaystackPayment(config);
   return (
     <>
       <ToastContainer />
@@ -645,42 +668,6 @@ function CheckOut({ user }: any) {
         )}
       </div>
       <Footer />
-      {/*--modal---*/}
-      <Modal
-        isOpen={open}
-        // onAfterOpen={afterOpenModal}
-        onRequestClose={() => setopen(false)}
-        style={customStyles}
-        contentLabel="Example Modal"
-      >
-        <div className="successModal">
-          <h2>Order Successful</h2>
-          <svg
-            width="67"
-            height="66"
-            viewBox="0 0 67 66"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M33.5 61.875C25.8419 61.875 18.4974 58.8328 13.0823 53.4177C7.66718 48.0026 4.625 40.6581 4.625 33C4.625 25.3419 7.66718 17.9974 13.0823 12.5823C18.4974 7.16718 25.8419 4.125 33.5 4.125C41.1581 4.125 48.5026 7.16718 53.9177 12.5823C59.3328 17.9974 62.375 25.3419 62.375 33C62.375 40.6581 59.3328 48.0026 53.9177 53.4177C48.5026 58.8328 41.1581 61.875 33.5 61.875ZM33.5 66C42.2521 66 50.6458 62.5232 56.8345 56.3345C63.0232 50.1458 66.5 41.7521 66.5 33C66.5 24.2479 63.0232 15.8542 56.8345 9.66548C50.6458 3.47678 42.2521 0 33.5 0C24.7479 0 16.3542 3.47678 10.1655 9.66548C3.97678 15.8542 0.5 24.2479 0.5 33C0.5 41.7521 3.97678 50.1458 10.1655 56.3345C16.3542 62.5232 24.7479 66 33.5 66Z"
-              fill="#46312A"
-            />
-            <path
-              d="M45.751 20.5013C45.7216 20.5298 45.694 20.5601 45.6685 20.5921L31.3423 38.8452L22.7087 30.2074C22.1222 29.661 21.3465 29.3635 20.545 29.3776C19.7435 29.3917 18.9788 29.7164 18.412 30.2833C17.8452 30.8501 17.5205 31.6148 17.5063 32.4163C17.4922 33.2178 17.7897 33.9935 18.3362 34.5799L29.2509 45.4988C29.545 45.7923 29.8951 46.0236 30.2805 46.1789C30.6658 46.3341 31.0785 46.4101 31.4939 46.4024C31.9093 46.3947 32.3189 46.3035 32.6982 46.134C33.0775 45.9646 33.4189 45.7205 33.7018 45.4163L50.1688 24.8326C50.7295 24.2441 51.0361 23.4585 51.0223 22.6458C51.0084 21.833 50.6753 21.0584 50.0948 20.4893C49.5144 19.9203 48.7333 19.6025 47.9204 19.6047C47.1076 19.607 46.3283 19.9291 45.751 20.5013Z"
-              fill="#46312A"
-            />
-          </svg>
-          <p>Thank you for your purchase !</p>
-          <h4>Your order ID is: 234258350</h4>
-          <p>You will recieve a confirmation email with order details</p>
-          <Link href="/shop">
-            <button className="p-btn p-btn2">
-              <span>CONTINUE SHOPPING</span>
-            </button>
-          </Link>
-        </div>
-      </Modal>
     </>
   );
 }
