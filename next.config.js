@@ -10,6 +10,10 @@ module.exports = {
         protocol: "http",
         hostname: "127.0.0.1",
       },
+      {
+        protocol: "https",
+        hostname: "api.gourmetnibs.ng",
+      },
     ],
   },
 };
